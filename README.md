@@ -7,6 +7,12 @@ Supports following pretrained checkpoints:
 Copyright (C), 2023- Jong-hun Shin. ETRI LIRS. All rights reserved.
 
 ## How To Use
+Install with pip.
+```
+pip install git+https://github.com/etri-crossmodal/gbswt5.git
+```
+
+### How to load a model
 ```
 import gbswt5
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
