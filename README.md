@@ -1,4 +1,6 @@
-# GBSWT5: huggingface Transformers-compatible GBST+T5 implementation(as CharFormer(Tay et al., 2022)) for GBST-KEByT5 Model.
+# GBSWT5
+
+Huggingface Transformers-compatible GBST+T5 implementation(as CharFormer(Tay et al., 2022)) for GBST-KEByT5 Model.
 
 Supports following pretrained checkpoints:
   * etri-lirs/gbst-kebyt5-base-preview
