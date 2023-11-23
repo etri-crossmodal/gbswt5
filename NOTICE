@@ -1,6 +1,10 @@
 etri-crossmodal/gbswt5
 Copyright (C) 2023~, Electronics and Telecommunications Research Institute.
 
+This software was supported by the Institute of Information & communication Technology Planning & Evaluation (IITP) 
+grant funded by the Korea government(MSIT). 
+(No. RS-2022-00187238, Development of Large Korean Languge Model Technology for Efficient Pre-training)
+
 The Initial Developer of GBST(Gradient-based Subword Tokenization; gbswt5/gbst.py file) module of the software, 
 is Phil Wang (https://github.com/lucidrains/charformer-pytorch).
 Copyright 2021 Phil Wang. All Rights Reserved.
