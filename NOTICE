@@ -1,0 +1,10 @@
+etri-crossmodal/gbswt5
+Copyright (C) 2023~, Electronics and Telecommunications Research Institute.
+
+The Initial Developer of GBST(Gradient-based Subword Tokenization; gbswt5/gbst.py file) module of the software, 
+is Phil Wang (https://github.com/lucidrains/charformer-pytorch).
+Copyright 2021 Phil Wang. All Rights Reserved.
+
+This software contains code of T5 model implementation(in gbswt5/modeling_gbst5.py),
+which derived from Huggingface Transformers (https://huggingface.co, https://github.com/huggingface/transformers).
+Copyright 2018- The Hugging Face team. All rights reserved.
