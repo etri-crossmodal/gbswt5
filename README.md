@@ -6,7 +6,7 @@ Supports following pretrained checkpoints:
   * [etri-lirs/gbst-kebyt5-base-preview](https://huggingface.co/etri-lirs/gbst-kebyt5-base-preview)
   * etri-lirs/gbst-kebyt5-large-preview (not yet)
 
-Copyright (C), 2023- Jong-hun Shin, Electronics and Telecommunications Research Institute. All rights reserved.
+Copyright (C), 2023- Electronics and Telecommunications Research Institute. All rights reserved.
 
 ## How To Use
 Install with pip.
