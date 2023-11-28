@@ -3,7 +3,7 @@
 Huggingface Transformers-compatible GBST+T5 implementation(as CharFormer(Tay et al., 2022)) for GBST-KEByT5 Model.
 
 Supports following pretrained checkpoints:
-  * etri-lirs/gbst-kebyt5-base-preview
+  * [etri-lirs/gbst-kebyt5-base-preview](https://huggingface.co/etri-lirs/gbst-kebyt5-base-preview)
   * etri-lirs/gbst-kebyt5-large-preview (not yet)
 
 Copyright (C), 2023- Jong-hun Shin, Electronics and Telecommunications Research Institute. All rights reserved.
