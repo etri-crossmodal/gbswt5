@@ -28,6 +28,17 @@ model = AutoModelForSeq2SeqLM.from_pretrained("etri-lirs/gbst-kebyt5-base-previe
  * transformers>=4.27.0
  * einops>=0.6.0
 
+## Citation
+Written in korean only.
+```
+@article{shin2023tflm,
+  title={Towards Korean-centric Token-free Pretrained Language Model},
+  author={Shin, Hur and Ryu, Lee and Seo, Seong and Lim.},
+  journal={Proceedings of the 35th Annual Conference on Human and Cognitive Language Technology, pp. 711-715.},
+  year={2023}
+}
+```
+
 ## Acknowledgement
 
  * This software was supported by the Institute of Information & communication Technology Planning & Evaluation (IITP) grant funded by the Korea government(MSIT). (No. RS-2022-00187238, Development of Large Korean Language Model Technology for Efficient Pre-training)
