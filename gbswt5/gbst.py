@@ -141,6 +141,19 @@ class GBSWT(nn.Module):
         """ return GBST candidate blocking list. """
         return self.blocks
 
+    def get_resized_mask(self, mask):
+        """ mask vector만 resize 시켜줌 """
+        b, s = mask.shape
+        block_multi, ds_factor = self.block_pad_multiple, self.downsample_factor
+        mask = pad_to_multiple(mask, block_multi,
+                               seq_dim=1, dim=-1, value=False)
+        m = int(math.ceil(s / ds_factor) * ds_factor)
+        mask = mask[:, :m]
+        mask = rearrange(mask, 'b (n m) -> b n m', m=ds_factor)
+        mask = torch.any(mask, dim=-1)
+
+        return mask
+
     @torch.cuda.amp.autocast()
     def forward(self, in_tensor, attention_mask=None):
         b, s = in_tensor.shape

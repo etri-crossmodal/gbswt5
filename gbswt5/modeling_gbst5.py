@@ -9,6 +9,7 @@
     Copyright (C) 2023, ETRI LIRS, Jong-hun Shin.
 """
 import copy
+import sys
 
 from typing import Optional, Union, Tuple
 
@@ -35,6 +36,10 @@ from .gbst import GBSWT
 
 
 logger = logging.get_logger(__name__)
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 class GBSWT5PreTrainedModel(T5PreTrainedModel):
@@ -321,6 +326,11 @@ class GBSWT5Stack(GBSWT5PreTrainedModel):
         hidden_states = self.final_layer_norm(hidden_states)
         hidden_states = self.dropout(hidden_states)
 
+        # to return downsampled attention_mask,
+        # hiding payload into last_hidden_states.
+        # but you can get it from self.embed_tokens.get_resized_mask(attn_mask)
+        setattr(hidden_states, 'attention_mask', attention_mask)
+
         # Add last layer
         if output_hidden_states:
             all_hidden_states = all_hidden_states + (hidden_states,)
@@ -336,16 +346,15 @@ class GBSWT5Stack(GBSWT5PreTrainedModel):
                     all_cross_attentions,
                 ]
                 if v is not None
-            ), attention_mask
+            )
 
-        # must be return downsampled attention_mask
         return BaseModelOutputWithPastAndCrossAttentions(
             last_hidden_state=hidden_states,
             past_key_values=present_key_value_states,
             hidden_states=all_hidden_states,
             attentions=all_attentions,
             cross_attentions=all_cross_attentions,
-        ), attention_mask
+        )
 
     def get_input_embeddings(self):
         return self.embed_tokens.embeds
@@ -432,7 +441,7 @@ class GBSWT5Model(GBSWT5PreTrainedModel):
 
         # Encode if needed (training, first prediction pass)
         if encoder_outputs is None:
-            encoder_outputs, attention_mask = self.encoder(
+            encoder_outputs = self.encoder(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
                 inputs_embeds=inputs_embeds,
@@ -441,9 +450,12 @@ class GBSWT5Model(GBSWT5PreTrainedModel):
                 output_hidden_states=output_hidden_states,
                 return_dict=return_dict,
             )
+
+            # update attention mask
+            if hasattr(encoder_outputs[0], 'attention_mask'):
+                attention_mask = getattr(encoder_outputs[0], 'attention_mask')
+
         elif return_dict and not isinstance(encoder_outputs, BaseModelOutput):
-            # inference mode (e.g. .generate()) - must dewrap encoder output 'tuple'
-            encoder_outputs, attention_mask = encoder_outputs
             encoder_outputs = BaseModelOutput(
                 last_hidden_state=encoder_outputs[0],
                 hidden_states=encoder_outputs[1] if len(encoder_outputs) > 1 else None,
@@ -451,6 +463,10 @@ class GBSWT5Model(GBSWT5PreTrainedModel):
             )
 
         hidden_states = encoder_outputs[0]
+
+        # resize attn_mask when it mismatched
+        if attention_mask is not None and hidden_states.size(1) != attention_mask.size(1):
+            attention_mask = self.encoder.embed_tokens.get_resized_mask(attention_mask)
 
         # Set device for model parallelism
         if self.model_parallel:
@@ -586,7 +602,7 @@ class GBSWT5ForConditionalGeneration(GBSWT5PreTrainedModel):
         # Encode if needed (training, first prediction pass)
         if encoder_outputs is None:
             # Convert encoder inputs in embeddings if needed
-            encoder_outputs, attention_mask = self.encoder(
+            encoder_outputs = self.encoder(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
                 inputs_embeds=inputs_embeds,
@@ -595,9 +611,11 @@ class GBSWT5ForConditionalGeneration(GBSWT5PreTrainedModel):
                 output_hidden_states=output_hidden_states,
                 return_dict=return_dict,
             )
+
+            # update attention mask
+            if hasattr(encoder_outputs[0], 'attention_mask'):
+                attention_mask = getattr(encoder_outputs[0], 'attention_mask')
         elif return_dict and not isinstance(encoder_outputs, BaseModelOutput):
-            # inference mode (e.g. .generate()) - must dewrap encoder output 'tuple'
-            encoder_outputs, attention_mask = encoder_outputs
             encoder_outputs = BaseModelOutput(
                 last_hidden_state=encoder_outputs[0],
                 hidden_states=encoder_outputs[1] if len(encoder_outputs) > 1 else None,
@@ -605,6 +623,9 @@ class GBSWT5ForConditionalGeneration(GBSWT5PreTrainedModel):
             )
 
         hidden_states = encoder_outputs[0]
+        # resize attn_mask when it mismatched
+        if attention_mask is not None and hidden_states.size(1) != attention_mask.size(1):
+            attention_mask = self.encoder.embed_tokens.get_resized_mask(attention_mask)
 
         if self.model_parallel:
             torch.cuda.set_device(self.decoder.first_device)
@@ -742,7 +763,7 @@ class GBSWT5EncoderModel(T5PreTrainedModel):
         ```"""
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        encoder_outputs, attention_mask = self.encoder(
+        encoder_outputs = self.encoder(
             input_ids=input_ids,
             attention_mask=attention_mask,
             inputs_embeds=inputs_embeds,
@@ -753,6 +774,7 @@ class GBSWT5EncoderModel(T5PreTrainedModel):
         )
 
         if return_resized_attention_mask:
+            attention_mask = self.encoder.embed_tokens.get_resized_mask(attention_mask)
             return encoder_outputs, attention_mask
 
         return encoder_outputs
