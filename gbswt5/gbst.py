@@ -58,7 +58,7 @@ class Depthwise1dConv(nn.Module):
             self.bn = nn.BatchNorm1d(out_dim, eps=1e-05,)
         self.proj = nn.Conv1d(out_dim, out_dim, 1)
 
-    @torch.cuda.amp.autocast(enabled=False, dtype=torch.float32)
+    @torch.cuda.amp.autocast(enabled=True, dtype=torch.float32)
     def forward(self, in_tensor):
         in_tensor = self.convol(in_tensor)
         if self.use_bn:
@@ -154,7 +154,7 @@ class GBSWT(nn.Module):
 
         return mask
 
-    @torch.cuda.amp.autocast()
+    @torch.cuda.amp.autocast(enabled=True, dtype=torch.float32)
     def forward(self, in_tensor, attention_mask=None):
         b, s = in_tensor.shape
         #print(f"initial shape: b, s : {b}, {s}, in_tensor.shape: {in_tensor.shape}")
