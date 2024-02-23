@@ -16,6 +16,7 @@ from typing import Optional, Union, Tuple
 import torch
 
 from torch import nn
+from torch.utils.checkpoint import checkpoint
 from transformers import add_start_docstrings
 from transformers.utils import logging
 from transformers.modeling_outputs import (
@@ -101,6 +102,14 @@ class GBSWT5PreTrainedModel(T5PreTrainedModel):
                 module.relative_attention_bias.weight.data.normal_(mean=0.0, std=factor * ((d_model) ** -0.5))
         elif isinstance(module, GBSWT):
             module._init_weights(factor)
+
+    def _set_gradient_checkpointing(self, module, value=False):
+        if isinstance(module, (GBSWT5Stack)):
+            module.gradient_checkpointing = value
+        elif isinstance(module, (T5Stack)):
+            module.gradient_checkpointing = value
+        elif isinstance(module, (T5Attention)):
+            module.gradient_checkpointing = value
 
 
 class GBSWT5Stack(GBSWT5PreTrainedModel):
