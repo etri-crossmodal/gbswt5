@@ -4,7 +4,7 @@ Huggingface Transformers-compatible GBST+T5 implementation(as CharFormer(Tay et 
 
 Supports following pretrained checkpoints:
   * [etri-lirs/gbst-kebyt5-base-preview](https://huggingface.co/etri-lirs/gbst-kebyt5-base-preview)
-  * etri-lirs/gbst-kebyt5-large-preview (not yet)
+  * [etri-lirs/gbst-kebyt5-large-preview](https://huggingface.co/etri-lirs/gbst-kebyt5-large-preview)
 
 Copyright (C), 2023- Electronics and Telecommunications Research Institute. All rights reserved.
 
